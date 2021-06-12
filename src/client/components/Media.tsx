@@ -266,7 +266,7 @@ function Options(props: OptionsProps) {
         .map(device =>
           <option
             key={device.id}
-            value={JSON.stringify({deviceId: device.id})}
+            value={device.id}
           >
             {device.name || device.type}
           </option>,

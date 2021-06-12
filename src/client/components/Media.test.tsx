@@ -5,13 +5,12 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import TestUtils from 'react-dom/test-utils'
 import { Provider } from 'react-redux'
-import { createStore, Store } from '../store'
-import { Media } from './Media'
-import { MEDIA_ENUMERATE, ME, DIAL, DIAL_STATE_IN_CALL, DIAL_STATE_HUNG_UP } from '../constants'
 import { dial } from '../actions/CallActions'
-import { MediaStream } from '../window'
-
+import { DEVICE_DEFAULT_ID, DEVICE_DISABLED_ID, DIAL, DIAL_STATE_HUNG_UP, DIAL_STATE_IN_CALL, ME, MEDIA_ENUMERATE } from '../constants'
 import { MediaConstraint } from '../reducers/media'
+import { createStore, Store } from '../store'
+import { MediaStream } from '../window'
+import { Media } from './Media'
 
 describe('Media', () => {
 
@@ -27,8 +26,8 @@ describe('Media', () => {
         type: 'audioinput',
       }, {
         id: '456',
-        label: 'Video Input',
-        name: 'videoinput',
+        name: 'Video Input',
+        type: 'videoinput',
       }],
     })
   })
@@ -128,6 +127,42 @@ describe('Media', () => {
       expect(store.getState().media.dialState).toBe(DIAL_STATE_HUNG_UP)
       const nickname = store.getState().nicknames[ME]
       expect((dial as jest.Mock).mock.calls).toEqual([[ { nickname } ]])
+    })
+  })
+
+  describe('options', () => {
+    it('should populate audio options', async () => {
+      const node = await render()
+      const options = Array.from(
+        node.querySelectorAll('select[name=audio-input] option')!,
+      )
+      expect(options.map(o => o.getAttribute('value'))).toEqual([
+        DEVICE_DISABLED_ID,
+        DEVICE_DEFAULT_ID,
+        '123',
+      ])
+      expect(options.map(o => o.textContent!.trim())).toEqual([
+        'No Audio',
+        'Default Audio',
+        'Audio Input',
+      ])
+    })
+
+    it('should populate video options', async () => {
+      const node = await render()
+      const options = Array.from(
+        node.querySelectorAll('select[name=video-input] option')!,
+      )
+      expect(options.map(o => o.getAttribute('value'))).toEqual([
+        DEVICE_DISABLED_ID,
+        DEVICE_DEFAULT_ID,
+        '456',
+      ])
+      expect(options.map(o => o.textContent!.trim())).toEqual([
+        'No Video',
+        'Default Video',
+        'Video Input',
+      ])
     })
   })
 

@@ -124,7 +124,6 @@ export function handlePlay(
         autoplayError: false,
       }
     case 'rejected':
-      console.log('play rejected', action.payload.name)
       if (action.payload.name !== 'NotAllowedError') {
         return state
       }
